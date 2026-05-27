@@ -1,0 +1,77 @@
+# ============================================================================
+# .gitignore — BD-HERRAMIENTAS
+# Archivos que NO se subirán al repositorio público
+# ============================================================================
+
+# === DATOS REALES (nunca subir) ===
+*BD_HERRAMIENTAS_v2*.xlsx
+*BD_HERRAMIENTAS.xlsx
+!*PLANTILLA*.xlsx
+!*plantilla*.xlsx
+*_REAL.*
+*_PRODUCCION.*
+
+# === CREDENCIALES Y SECRETOS ===
+*.env
+*.env.local
+*.env.production
+credentials.json
+client_secret*.json
+service-account*.json
+*secrets*
+*password*
+*.key
+*.pem
+
+# === SISTEMA OPERATIVO ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# === EDITORES ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# === GOOGLE APPS SCRIPT (clasp) ===
+.clasp.json
+.claspignore
+node_modules/
+
+# === LOGS Y TEMPORALES ===
+*.log
+*.tmp
+*.bak
+*.backup
+*.cache
+~$*
+
+# === ARCHIVOS DE USUARIO ===
+*personal*
+*privado*
+mis_*
+
+# === EXPORTACIONES DEL SISTEMA ===
+exports/
+backups/
+dumps/
+*.csv.bak
+
+# === IMÁGENES CON DATOS SENSIBLES ===
+screenshots_internos/
+fotos_clientes/
+
+# === Otros ===
+.history/
+.local/
+*.pyc
+__pycache__/
