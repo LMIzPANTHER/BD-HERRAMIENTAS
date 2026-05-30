@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0C1B33">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>BMW Lindavista · Control de Herramientas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BMW+Type+Next:wght@300;400;700&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   BMW LINDAVISTA — Control de Herramientas
+   Design: Corporate BMW · Industrial Precision
+   ============================================================ */
+
+:root {
+  --bmw-blue:      #0C1B33;
+  --bmw-blue-mid:  #1C2D5E;
+  --bmw-blue-light:#1E4D9B;
+  --bmw-red:       #AE1C28;
+  --bmw-red-light: #CC2233;
+  --bmw-silver:    #8C9BAB;
+  --bmw-silver-light: #C8D3DD;
+  --bmw-white:     #F4F6F8;
+  --bmw-chrome:    #D4DEE8;
+  --bmw-dark:      #060F1E;
+  --bmw-card:      #111D30;
+  --bmw-card2:     #162035;
+  --accent-gold:   #C9A84C;
+  --success:       #1A7A4A;
+  --warning:       #B8821A;
+  --danger:        #AE1C28;
+
+  --font-display: 'Rajdhani', sans-serif;
+  --font-mono:    'Share Tech Mono', monospace;
+  --font-body:    'Rajdhani', sans-serif;
+
+  --radius: 4px;
+  --radius-lg: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.4);
+  --transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  --border: 1px solid rgba(140,155,171,0.15);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background: var(--bmw-dark);
+  color: var(--bmw-white);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== HEADER ===== */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bmw-blue);
+  border-bottom: 2px solid var(--bmw-red);
+  padding: 0 16px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.6);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bmw-roundel {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.header-text h1 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bmw-white);
+  line-height: 1;
+}
+.header-text span {
+  font-size: 11px;
+  color: var(--bmw-silver);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--bmw-silver);
+}
+
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #1A7A4A;
+  box-shadow: 0 0 6px rgba(26,122,74,0.7);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; }
+  50% { opacity:0.4; }
+}
+
+/* ===== NAV TABS ===== */
+.nav-tabs {
+  display: flex;
+  background: var(--bmw-blue);
+  border-bottom: var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.nav-tabs::-webkit-scrollbar { display:none; }
+
+.nav-tab {
+  flex: 1;
+  min-width: 80px;
+  padding: 12px 8px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bmw-silver);
+  cursor: pointer;
+  transition: var(--transition);
+  border-bottom: 3px solid transparent;
+  user-select: none;
+  white-space: nowrap;
+}
+.nav-tab.active {
+  color: var(--bmw-white);
+  border-bottom-color: var(--bmw-red);
+  background: rgba(255,255,255,0.04);
+}
+.nav-tab:hover:not(.active) {
+  color: var(--bmw-chrome);
+  background: rgba(255,255,255,0.02);
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content { padding: 16px; max-width: 800px; margin: 0 auto; }
+
+/* ===== SECTION TITLE ===== */
+.section-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bmw-silver);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-color, rgba(140,155,171,0.15));
+}
+
+/* ===== SEARCH ===== */
+.search-container { margin-bottom: 16px; }
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  background: var(--bmw-card);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: 14px 48px 14px 16px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--bmw-white);
+  outline: none;
+  transition: var(--transition);
+  letter-spacing: 0.05em;
+}
+.search-input::placeholder { color: var(--bmw-silver); font-weight: 400; }
+.search-input:focus {
+  border-color: var(--bmw-blue-light);
+  box-shadow: 0 0 0 2px rgba(30,77,155,0.3);
+  background: var(--bmw-card2);
+}
+
+.search-icon {
+  position: absolute;
+  right: 16px;
+  color: var(--bmw-silver);
+  pointer-events: none;
+}
+
+/* ===== FILTER CHIPS ===== */
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.chip {
+  padding: 6px 14px;
+  background: var(--bmw-card);
+  border: var(--border);
+  border-radius: 20px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bmw-silver);
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+}
+.chip.active {
+  background: var(--bmw-blue-light);
+  border-color: var(--bmw-blue-light);
+  color: white;
+}
+.chip:hover:not(.active) { border-color: var(--bmw-silver); color: var(--bmw-white); }
+
+/* ===== TOOL CARD ===== */
+.tools-grid { display: flex; flex-direction: column; gap: 10px; }
+
+.tool-card {
+  background: var(--bmw-card);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.tool-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--bmw-blue-light);
+  border-radius: 3px 0 0 3px;
+}
+.tool-card.prestado::before { background: var(--bmw-red); }
+.tool-card.disponible::before { background: var(--success); }
+.tool-card:hover {
+  background: var(--bmw-card2);
+  border-color: rgba(140,155,171,0.3);
+  transform: translateY(-1px);
+}
+
+.tool-photo {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius);
+  object-fit: cover;
+  background: var(--bmw-blue-mid);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.tool-photo img { width:100%; height:100%; object-fit:cover; }
+.tool-photo-placeholder {
+  width: 56px; height: 56px;
+  background: var(--bmw-blue-mid);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bmw-silver);
+  flex-shrink: 0;
+}
+
+.tool-info { flex: 1; min-width: 0; }
+
+.tool-id {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--bmw-silver);
+  letter-spacing: 0.1em;
+}
+.tool-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--bmw-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.03em;
+}
+.tool-meta {
+  font-size: 12px;
+  color: var(--bmw-silver);
+  margin-top: 2px;
+}
+
+.tool-status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.badge-disponible { background: rgba(26,122,74,0.2); color: #4ADE80; border: 1px solid rgba(26,122,74,0.4); }
+.badge-prestado   { background: rgba(174,28,40,0.2); color: #FF6B6B; border: 1px solid rgba(174,28,40,0.4); }
+.badge-agotado    { background: rgba(184,130,26,0.2); color: #FCD34D; border: 1px solid rgba(184,130,26,0.4); }
+
+/* ===== KPI CARDS ===== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.kpi-card {
+  background: var(--bmw-card);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--kpi-color, var(--bmw-blue-light));
+}
+.kpi-number {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--kpi-color, var(--bmw-white));
+}
+.kpi-label {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--bmw-silver);
+  margin-top: 6px;
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(6,15,30,0.92);
+  z-index: 200;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn 0.15s ease;
+}
+.modal-overlay.open { display: flex; align-items: flex-end; }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.modal {
+  background: var(--bmw-blue);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-top: 2px solid var(--bmw-red);
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.modal-header {
+  padding: 20px 20px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--bmw-silver);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+.modal-close:hover { color: var(--bmw-white); }
+
+.modal-body { padding: 20px; }
+
+/* ===== PHOTO ZONE ===== */
+.photo-zone {
+  width: 100%;
+  height: 180px;
+  background: var(--bmw-card);
+  border: 2px dashed rgba(140,155,171,0.3);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: var(--transition);
+  overflow: hidden;
+  position: relative;
+}
+.photo-zone:hover { border-color: var(--bmw-blue-light); }
+.photo-zone img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: calc(var(--radius-lg) - 2px);
+}
+.photo-zone-label {
+  color: var(--bmw-silver);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+/* ===== FORM ELEMENTS ===== */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--bmw-silver);
+  margin-bottom: 6px;
+}
+.form-control {
+  width: 100%;
+  background: var(--bmw-card);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--bmw-white);
+  outline: none;
+  transition: var(--transition);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.form-control:focus {
+  border-color: var(--bmw-blue-light);
+  box-shadow: 0 0 0 2px rgba(30,77,155,0.3);
+}
+.form-control option { background: var(--bmw-blue-mid); }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+  margin-bottom: 10px;
+  outline: none;
+}
+.btn-primary {
+  background: var(--bmw-blue-light);
+  color: white;
+}
+.btn-primary:hover { background: #2559B8; }
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-danger {
+  background: var(--bmw-red);
+  color: white;
+}
+.btn-danger:hover { background: var(--bmw-red-light); }
+.btn-danger:active { transform: scale(0.98); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--bmw-silver);
+  border: var(--border);
+}
+.btn-ghost:hover { color: var(--bmw-white); border-color: rgba(140,155,171,0.4); }
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+/* ===== DETAIL ROWS ===== */
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: var(--border);
+  gap: 12px;
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-key {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bmw-silver);
+  flex-shrink: 0;
+}
+.detail-val {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* ===== HISTORIAL ===== */
+.historial-item {
+  background: var(--bmw-card);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.historial-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.historial-item.prestamo::before { background: var(--bmw-blue-light); }
+.historial-item.devolucion::before { background: var(--success); }
+
+.historial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.historial-tipo {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.historial-fecha {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--bmw-silver);
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--bmw-silver);
+}
+.empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+.empty-text {
+  font-family: var(--font-display);
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--bmw-card2);
+  border: var(--border);
+  border-left: 3px solid var(--bmw-blue-light);
+  border-radius: var(--radius);
+  padding: 12px 20px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--bmw-white);
+  z-index: 999;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { border-left-color: var(--success); }
+.toast.error { border-left-color: var(--bmw-red); }
+
+/* ===== LOADING ===== */
+.loading-bar {
+  height: 2px;
+  background: linear-gradient(90deg, var(--bmw-blue-light), var(--bmw-red));
+  position: fixed;
+  top: 0; left: 0;
+  width: 0;
+  z-index: 300;
+  transition: width 0.3s ease;
+}
+
+/* ===== VIEWS ===== */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(140,155,171,0.3); border-radius: 4px; }
+
+/* ===== RESPONSIVE ===== */
+@media (min-width: 600px) {
+  .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+  .modal { max-width: 500px; margin: 0 auto; border-radius: var(--radius-lg); }
+  .modal-overlay { align-items: center; }
+  .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="loading-bar" id="loadingBar"></div>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-brand">
+    <!-- BMW Roundel SVG -->
+    <svg class="bmw-roundel" viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="17" fill="white" stroke="#1C2D5E" stroke-width="1"/>
+      <circle cx="18" cy="18" r="14" fill="white" stroke="#1C2D5E" stroke-width="0.5"/>
+      <path d="M18 4 A14 14 0 0 1 32 18 L18 18 Z" fill="#1C2D5E"/>
+      <path d="M4 18 A14 14 0 0 1 18 4 L18 18 Z" fill="white"/>
+      <path d="M18 32 A14 14 0 0 1 4 18 L18 18 Z" fill="#1C2D5E"/>
+      <path d="M32 18 A14 14 0 0 1 18 32 L18 18 Z" fill="white"/>
+      <circle cx="18" cy="18" r="5" fill="white" stroke="#1C2D5E" stroke-width="0.5"/>
+      <text x="18" y="15" text-anchor="middle" font-size="3.5" font-family="Arial" font-weight="bold" fill="#1C2D5E">BMW</text>
+    </svg>
+    <div class="header-text">
+      <h1>Herramientas</h1>
+      <span>Lindavista · Postventa</span>
+    </div>
+  </div>
+  <div class="header-status">
+    <div class="status-dot"></div>
+    <span id="headerCount">—</span>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-tabs">
+  <div class="nav-tab active" onclick="showView('inventario')">📦 Inventario</div>
+  <div class="nav-tab" onclick="showView('historial')">📋 Historial</div>
+  <div class="nav-tab" onclick="showView('dashboard')">📊 Dashboard</div>
+</nav>
+
+<!-- ============================================================
+     VIEW: INVENTARIO
+     ============================================================ -->
+<div class="view active" id="view-inventario">
+  <div class="main-content">
+
+    <div class="search-container">
+      <div class="search-box">
+        <input type="text" class="search-input" id="searchInput"
+          placeholder="Buscar por #ID, número de parte o descripción…"
+          oninput="handleSearch(this.value)">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="filter-chips" id="filterChips">
+      <div class="chip active" onclick="setFilter('todos')">Todos</div>
+      <div class="chip" onclick="setFilter('disponible')">Disponibles</div>
+      <div class="chip" onclick="setFilter('prestado')">Prestados</div>
+      <div class="chip" onclick="setFilter('GENERICOS')">Genéricos</div>
+    </div>
+
+    <div class="section-title">Herramientas</div>
+    <div class="tools-grid" id="toolsGrid">
+      <div class="empty-state">
+        <div class="empty-icon">🔧</div>
+        <div class="empty-text">Cargando inventario…</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     VIEW: HISTORIAL
+     ============================================================ -->
+<div class="view" id="view-historial">
+  <div class="main-content">
+    <div class="section-title">Registro de movimientos</div>
+    <div id="historialList">
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-text">Sin movimientos registrados</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     VIEW: DASHBOARD
+     ============================================================ -->
+<div class="view" id="view-dashboard">
+  <div class="main-content">
+    <div class="section-title">Dashboard operativo</div>
+    <div class="kpi-grid">
+      <div class="kpi-card" style="--kpi-color: #4ADE80">
+        <div class="kpi-number" id="kpiDisponibles">—</div>
+        <div class="kpi-label">Disponibles</div>
+      </div>
+      <div class="kpi-card" style="--kpi-color: #FF6B6B">
+        <div class="kpi-number" id="kpiPrestados">—</div>
+        <div class="kpi-label">Prestados</div>
+      </div>
+      <div class="kpi-card" style="--kpi-color: #FCD34D">
+        <div class="kpi-number" id="kpiTotal">—</div>
+        <div class="kpi-label">Total</div>
+      </div>
+      <div class="kpi-card" style="--kpi-color: #60A5FA">
+        <div class="kpi-number" id="kpiMovHoy">—</div>
+        <div class="kpi-label">Mov. hoy</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:8px">Préstamos activos</div>
+    <div id="prestamosActivos">
+      <div class="empty-state">
+        <div class="empty-icon">✅</div>
+        <div class="empty-text">Sin préstamos activos</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: DETALLE DE HERRAMIENTA
+     ============================================================ -->
+<div class="modal-overlay" id="modalDetalle">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalToolName">—</div>
+        <div style="font-family:var(--font-mono);font-size:12px;color:var(--bmw-silver);margin-top:4px" id="modalToolId">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modalDetalle')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Foto de la herramienta -->
+      <div class="photo-zone" id="photoZone" onclick="triggerPhotoUpload()">
+        <div id="photoPlaceholder">
+          <div style="text-align:center">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--bmw-silver)">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <div class="photo-zone-label">Toca para subir foto</div>
+            <div style="font-size:11px;color:var(--bmw-silver);margin-top:4px">Primera foto = imagen oficial</div>
+          </div>
+        </div>
+        <img id="toolPhoto" src="" alt="" style="display:none"/>
+      </div>
+      <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(event)">
+
+      <!-- Detalles -->
+      <div id="toolDetails"></div>
+
+      <!-- Estado actual -->
+      <div id="estadoActual" style="margin:16px 0"></div>
+
+      <!-- Botones de acción -->
+      <div id="actionButtons"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: FORMULARIO PRÉSTAMO
+     ============================================================ -->
+<div class="modal-overlay" id="modalPrestamo">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Registrar Préstamo</div>
+      <button class="modal-close" onclick="closeModal('modalPrestamo')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--bmw-card);border-radius:var(--radius);padding:12px;margin-bottom:20px;font-family:var(--font-mono);font-size:13px;color:var(--bmw-silver)">
+        <span style="color:var(--bmw-white);font-weight:700" id="prestamoToolRef">—</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Técnico solicitante *</label>
+        <select class="form-control" id="selectTecnico">
+          <option value="">— Selecciona técnico —</option>
+          <option>Hugo</option>
+          <option>Denilson</option>
+          <option>Angel</option>
+          <option>Oswaldo</option>
+          <option>Cristhian</option>
+          <option>Juvenal</option>
+          <option>Manuel</option>
+          <option>Carlos</option>
+          <option>Toño</option>
+          <option>Otro (externo)</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="otroNombreGroup" style="display:none">
+        <label class="form-label">Nombre del solicitante externo *</label>
+        <input type="text" class="form-control" id="otroNombre" placeholder="Nombre completo">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Fecha de devolución esperada *</label>
+        <input type="date" class="form-control" id="fechaDevolucion">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Observaciones</label>
+        <input type="text" class="form-control" id="observaciones" placeholder="Opcional…">
+      </div>
+
+      <button class="btn btn-primary" onclick="confirmarPrestamo()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+        Confirmar Préstamo
+      </button>
+      <button class="btn btn-ghost" onclick="closeModal('modalPrestamo')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: CONFIRMAR DEVOLUCIÓN
+     ============================================================ -->
+<div class="modal-overlay" id="modalDevolucion">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Registrar Devolución</div>
+      <button class="modal-close" onclick="closeModal('modalDevolucion')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="devolucionInfo" style="margin-bottom:20px"></div>
+      <button class="btn btn-success" onclick="confirmarDevolucion()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Confirmar Devolución
+      </button>
+      <button class="btn btn-ghost" onclick="closeModal('modalDevolucion')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// BMW Lindavista — Control de Herramientas
+// Storage: localStorage (sin backend requerido)
+// Fácil migración a Firebase Firestore
+// ============================================================
+
+// ─── DATOS BASE (migrados de BD_HERRAMIENTAS_v2) ────────────
+// En producción estos vienen de Firebase/Sheets API
+// Muestra representativa de las ubicaciones y grupos reales
+
+const UBICACIONES = ['A2','A3','A4','A5','A7','A8','A9','A10','A11','A14','A16','A17','A18','A19','A21','CAJA DE CABLES'];
+
+const TECNICOS = ['Hugo','Denilson','Angel','Oswaldo','Cristhian','Juvenal','Manuel','Carlos','Toño','Otro (externo)'];
+
+// Inventario inicial (datos reales del xlsx - muestra de 30 herramientas representativas)
+const INVENTARIO_INICIAL = [
+  { id:1,   num_parte:'83300496223', num_pieza:'645120/121', tipo:'PIEZA_INDIVIDUAL', desc:'Herramienta extracción inyector', grupo:'11', ubicacion:'A4', cant:1 },
+  { id:2,   num_parte:'83300496223', num_pieza:'645120/122', tipo:'PIEZA_INDIVIDUAL', desc:'Herramienta extracción inyector', grupo:'11', ubicacion:'A4', cant:1 },
+  { id:3,   num_parte:'83300496223', num_pieza:'645120/123', tipo:'PIEZA_INDIVIDUAL', desc:'Herramienta extracción inyector', grupo:'11', ubicacion:'A4', cant:1 },
+  { id:4,   num_parte:'83302285501', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Extractor de polea', grupo:'12', ubicacion:'A5', cant:1 },
+  { id:5,   num_parte:'83300495701', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Llave de cubo de rueda', grupo:'12', ubicacion:'A5', cant:2 },
+  { id:6,   num_parte:'',            num_pieza:'119810/811', tipo:'PIEZA_INDIVIDUAL', desc:'Adaptador de compresión', grupo:'13', ubicacion:'A7', cant:1 },
+  { id:7,   num_parte:'',            num_pieza:'119810/812', tipo:'PIEZA_INDIVIDUAL', desc:'Adaptador de compresión', grupo:'13', ubicacion:'A7', cant:1 },
+  { id:8,   num_parte:'83302210010', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Soporte de motor universal', grupo:'16', ubicacion:'A8', cant:1 },
+  { id:9,   num_parte:'83300490090', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Tensor de correa', grupo:'18', ubicacion:'A9', cant:1 },
+  { id:10,  num_parte:'83302448000', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Extractor de rodamiento', grupo:'21', ubicacion:'A10', cant:1 },
+  { id:11,  num_parte:'',            num_pieza:'',           tipo:'GENERICO',         desc:'Disk Brake Quiet (spray)', grupo:'GENERICOS', ubicacion:'A19', cant:20 },
+  { id:12,  num_parte:'',            num_pieza:'',           tipo:'GENERICO',         desc:'Lubricante multi-propósito BMW', grupo:'GENERICOS', ubicacion:'A19', cant:15 },
+  { id:13,  num_parte:'83212339990', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Adaptador para diagnóstico', grupo:'22', ubicacion:'A11', cant:1 },
+  { id:14,  num_parte:'83300493050', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Compresor de resorte', grupo:'23', ubicacion:'A14', cant:1 },
+  { id:15,  num_parte:'83300494000', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Herramienta de transmisión', grupo:'24', ubicacion:'A16', cant:1 },
+  { id:16,  num_parte:'',            num_pieza:'645130/001', tipo:'PIEZA_INDIVIDUAL', desc:'Dado de culata N20', grupo:'11', ubicacion:'A4', cant:1 },
+  { id:17,  num_parte:'',            num_pieza:'645130/002', tipo:'PIEZA_INDIVIDUAL', desc:'Dado de culata N55', grupo:'11', ubicacion:'A4', cant:1 },
+  { id:18,  num_parte:'83300499900', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Extractor de árbol de levas', grupo:'25', ubicacion:'A17', cant:1 },
+  { id:19,  num_parte:'83302340010', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Plato de montaje diferencial', grupo:'26', ubicacion:'A18', cant:1 },
+  { id:20,  num_parte:'83300491200', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Calibrador de frenos', grupo:'27', ubicacion:'A21', cant:1 },
+  { id:21,  num_parte:'',            num_pieza:'',           tipo:'GENERICO',         desc:'Juego de machos y terrajas', grupo:'GENERICOS', ubicacion:'CAJA DE CABLES', cant:3 },
+  { id:22,  num_parte:'83210141796', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Adaptador suspensión delantera', grupo:'31', ubicacion:'A3', cant:1 },
+  { id:23,  num_parte:'83300488990', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Herramienta de cremallera', grupo:'32', ubicacion:'A2', cant:1 },
+  { id:24,  num_parte:'',            num_pieza:'645140/001', tipo:'PIEZA_INDIVIDUAL', desc:'Pasador de bloqueo árbol levas', grupo:'11', ubicacion:'A4', cant:2 },
+  { id:25,  num_parte:'',            num_pieza:'',           tipo:'GENERICO',         desc:'Sellador de juntas Loctite 5900', grupo:'GENERICOS', ubicacion:'A19', cant:8 },
+  { id:26,  num_parte:'83300496855', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Adaptador caja automática ZF8', grupo:'24', ubicacion:'A16', cant:1 },
+  { id:27,  num_parte:'83302285601', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Soporte de transmisión', grupo:'24', ubicacion:'A16', cant:1 },
+  { id:28,  num_parte:'',            num_pieza:'119820/001', tipo:'PIEZA_INDIVIDUAL', desc:'Boquilla calefacción N47', grupo:'18', ubicacion:'A9', cant:1 },
+  { id:29,  num_parte:'83300493010', num_pieza:'',           tipo:'FAMILIA_COMPLETA', desc:'Herramienta de pistón', grupo:'21', ubicacion:'A10', cant:2 },
+  { id:30,  num_parte:'',            num_pieza:'',           tipo:'GENERICO',         desc:'Cable extensión OBD 3m', grupo:'GENERICOS', ubicacion:'CAJA DE CABLES', cant:2 },
+];
+
+// ─── ESTADO DE LA APP ────────────────────────────────────────
+let DB = {
+  inventario: [],
+  movimientos: [],
+};
+
+let currentToolId = null;
+let currentFilter = 'todos';
+let currentSearch = '';
+let currentMovimientoId = null;
+
+// ─── INIT ────────────────────────────────────────────────────
+function init() {
+  loadDB();
+  renderInventario();
+  renderHistorial();
+  renderDashboard();
+  updateHeader();
+
+  // Fecha default mañana
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('fechaDevolucion').value = tomorrow.toISOString().split('T')[0];
+
+  // Listener selector técnico → mostrar campo externo
+  document.getElementById('selectTecnico').addEventListener('change', function(){
+    document.getElementById('otroNombreGroup').style.display =
+      this.value === 'Otro (externo)' ? 'block' : 'none';
+  });
+}
+
+function loadDB() {
+  try {
+    const saved = localStorage.getItem('bmw_herramientas_db');
+    if (saved) {
+      DB = JSON.parse(saved);
+    } else {
+      // Primer inicio — cargar inventario base
+      DB.inventario = INVENTARIO_INICIAL.map(h => ({
+        ...h,
+        foto: null,
+        prestado: false,
+        prestado_a: null,
+      }));
+      DB.movimientos = [];
+      saveDB();
+    }
+  } catch(e) {
+    DB.inventario = INVENTARIO_INICIAL.map(h => ({...h, foto:null, prestado:false, prestado_a:null}));
+    DB.movimientos = [];
+  }
+}
+
+function saveDB() {
+  try { localStorage.setItem('bmw_herramientas_db', JSON.stringify(DB)); } catch(e) {}
+}
+
+// ─── VISTAS ──────────────────────────────────────────────────
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const idx = ['inventario','historial','dashboard'].indexOf(name);
+  if(idx >= 0) tabs[idx].classList.add('active');
+
+  if(name === 'historial') renderHistorial();
+  if(name === 'dashboard') renderDashboard();
+}
+
+// ─── BÚSQUEDA Y FILTROS ───────────────────────────────────────
+function handleSearch(val) {
+  currentSearch = val.toLowerCase().trim();
+  renderInventario();
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  renderInventario();
+}
+
+function filteredInventario() {
+  return DB.inventario.filter(h => {
+    // filtro estado
+    if(currentFilter === 'disponible' && h.prestado) return false;
+    if(currentFilter === 'prestado' && !h.prestado) return false;
+    if(currentFilter === 'GENERICOS' && h.tipo !== 'GENERICO') return false;
+
+    // búsqueda
+    if(!currentSearch) return true;
+    const q = currentSearch;
+    return String(h.id).includes(q)
+      || (h.num_parte||'').toLowerCase().includes(q)
+      || (h.num_pieza||'').toLowerCase().includes(q)
+      || (h.desc||'').toLowerCase().includes(q)
+      || (h.ubicacion||'').toLowerCase().includes(q)
+      || (h.grupo||'').toLowerCase().includes(q);
+  });
+}
+
+// ─── RENDER INVENTARIO ────────────────────────────────────────
+function renderInventario() {
+  const grid = document.getElementById('toolsGrid');
+  const tools = filteredInventario();
+
+  if(!tools.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-text">Sin resultados para "${currentSearch || currentFilter}"</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = tools.map(h => {
+    const estatus = h.prestado ? 'prestado' : 'disponible';
+    const badge   = h.prestado
+      ? '<span class="tool-status-badge badge-prestado">Prestado</span>'
+      : '<span class="tool-status-badge badge-disponible">Disponible</span>';
+
+    const numParte = h.num_pieza || h.num_parte || `ID-${h.id}`;
+    const fotoEl = h.foto
+      ? `<div class="tool-photo"><img src="${h.foto}" alt=""></div>`
+      : `<div class="tool-photo-placeholder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>`;
+
+    return `<div class="tool-card ${estatus}" onclick="openDetalle(${h.id})">
+      ${fotoEl}
+      <div class="tool-info">
+        <div class="tool-id">#${h.id} · ${h.ubicacion}</div>
+        <div class="tool-name">${h.desc || numParte}</div>
+        <div class="tool-meta">${numParte} · Grp ${h.grupo}</div>
+      </div>
+      ${badge}
+    </div>`;
+  }).join('');
+}
+
+// ─── MODAL DETALLE ────────────────────────────────────────────
+function openDetalle(id) {
+  const h = DB.inventario.find(x => x.id === id);
+  if(!h) return;
+  currentToolId = id;
+
+  document.getElementById('modalToolName').textContent = h.desc || h.num_parte || `Herramienta #${id}`;
+  document.getElementById('modalToolId').textContent = `#${h.id} · ${h.ubicacion} · Grupo ${h.grupo}`;
+
+  // Foto
+  const photo = document.getElementById('toolPhoto');
+  const placeholder = document.getElementById('photoPlaceholder');
+  if(h.foto) {
+    photo.src = h.foto;
+    photo.style.display = 'block';
+    placeholder.style.display = 'none';
+  } else {
+    photo.style.display = 'none';
+    placeholder.style.display = 'flex';
+    placeholder.style.flexDirection = 'column';
+    placeholder.style.alignItems = 'center';
+  }
+
+  // Detalles
+  const numParte = h.num_parte || '—';
+  const numPieza = h.num_pieza || '—';
+  document.getElementById('toolDetails').innerHTML = `
+    <div class="detail-row"><span class="detail-key">Núm. Parte (Familia)</span><span class="detail-val">${numParte}</span></div>
+    <div class="detail-row"><span class="detail-key">Núm. Pieza</span><span class="detail-val">${numPieza}</span></div>
+    <div class="detail-row"><span class="detail-key">Tipo</span><span class="detail-val">${h.tipo}</span></div>
+    <div class="detail-row"><span class="detail-key">Grupo contable</span><span class="detail-val">${h.grupo}</span></div>
+    <div class="detail-row"><span class="detail-key">Ubicación</span><span class="detail-val">${h.ubicacion}</span></div>
+    <div class="detail-row"><span class="detail-key">Cantidad total</span><span class="detail-val">${h.cant}</span></div>
+  `;
+
+  // Estado actual
+  if(h.prestado && h.prestado_a) {
+    document.getElementById('estadoActual').innerHTML = `
+      <div style="background:rgba(174,28,40,0.15);border:1px solid rgba(174,28,40,0.3);border-radius:var(--radius);padding:12px">
+        <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#FF6B6B;margin-bottom:4px">⚠ Actualmente prestada</div>
+        <div style="font-family:var(--font-display);font-size:14px;font-weight:600">Técnico: ${h.prestado_a}</div>
+        <div style="font-size:12px;color:var(--bmw-silver);margin-top:2px">Desde: ${h.prestado_desde || '—'}</div>
+      </div>`;
+    document.getElementById('actionButtons').innerHTML = `
+      <button class="btn btn-danger" onclick="openDevolucion(${id})">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Registrar Devolución
+      </button>`;
+  } else {
+    document.getElementById('estadoActual').innerHTML = `
+      <div style="background:rgba(26,122,74,0.12);border:1px solid rgba(26,122,74,0.3);border-radius:var(--radius);padding:12px">
+        <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#4ADE80">✓ Disponible para préstamo</div>
+      </div>`;
+    document.getElementById('actionButtons').innerHTML = `
+      <button class="btn btn-primary" onclick="openPrestamo(${id})">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Solicitar Préstamo
+      </button>`;
+  }
+
+  openModal('modalDetalle');
+}
+
+// ─── FOTO ─────────────────────────────────────────────────────
+function triggerPhotoUpload() {
+  document.getElementById('photoInput').click();
+}
+
+function handlePhotoUpload(e) {
+  const file = e.target.files[0];
+  if(!file || !currentToolId) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const h = DB.inventario.find(x => x.id === currentToolId);
+    if(!h) return;
+    h.foto = ev.target.result;
+    saveDB();
+    // Mostrar foto en modal
+    document.getElementById('toolPhoto').src = h.foto;
+    document.getElementById('toolPhoto').style.display = 'block';
+    document.getElementById('photoPlaceholder').style.display = 'none';
+    renderInventario();
+    showToast('📸 Foto guardada como imagen oficial', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── PRÉSTAMO ─────────────────────────────────────────────────
+function openPrestamo(id) {
+  currentToolId = id;
+  const h = DB.inventario.find(x => x.id === id);
+  document.getElementById('prestamoToolRef').textContent =
+    `#${h.id} · ${h.desc || h.num_parte || h.num_pieza} · ${h.ubicacion}`;
+  document.getElementById('selectTecnico').value = '';
+  document.getElementById('otroNombre').value = '';
+  document.getElementById('observaciones').value = '';
+  document.getElementById('otroNombreGroup').style.display = 'none';
+
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('fechaDevolucion').value = tomorrow.toISOString().split('T')[0];
+
+  closeModal('modalDetalle');
+  openModal('modalPrestamo');
+}
+
+function confirmarPrestamo() {
+  const tecnico = document.getElementById('selectTecnico').value;
+  const otro    = document.getElementById('otroNombre').value.trim();
+  const fecha   = document.getElementById('fechaDevolucion').value;
+  const obs     = document.getElementById('observaciones').value.trim();
+
+  if(!tecnico) { showToast('Selecciona un técnico', 'error'); return; }
+  if(tecnico === 'Otro (externo)' && !otro) { showToast('Ingresa el nombre del solicitante', 'error'); return; }
+  if(!fecha) { showToast('Selecciona fecha de devolución', 'error'); return; }
+
+  const nombre = tecnico === 'Otro (externo)' ? otro : tecnico;
+  const h = DB.inventario.find(x => x.id === currentToolId);
+  if(!h) return;
+
+  const ahora = new Date();
+  const movId = 'MOV-' + ahora.toISOString().replace(/[^0-9]/g,'').slice(0,14);
+
+  // Actualizar herramienta
+  h.prestado      = true;
+  h.prestado_a    = nombre;
+  h.prestado_desde = ahora.toLocaleString('es-MX');
+
+  // Registrar movimiento
+  DB.movimientos.unshift({
+    id: movId,
+    tipo: 'PRESTAMO',
+    tool_id: currentToolId,
+    tool_desc: h.desc || h.num_parte || h.num_pieza,
+    tool_ubicacion: h.ubicacion,
+    tecnico: nombre,
+    fecha_prestamo: ahora.toISOString(),
+    fecha_dev_esperada: fecha,
+    fecha_devolucion: null,
+    observaciones: obs,
+    estado: 'PRESTADO',
+  });
+
+  saveDB();
+  closeModal('modalPrestamo');
+  renderInventario();
+  renderDashboard();
+  updateHeader();
+
+  showToast(`✅ Préstamo registrado — ${nombre}`, 'success');
+}
+
+// ─── DEVOLUCIÓN ───────────────────────────────────────────────
+function openDevolucion(id) {
+  currentToolId = id;
+  const h = DB.inventario.find(x => x.id === id);
+  const mov = DB.movimientos.find(m => m.tool_id === id && m.estado === 'PRESTADO');
+
+  document.getElementById('devolucionInfo').innerHTML = `
+    <div class="detail-row"><span class="detail-key">Herramienta</span><span class="detail-val">#${h.id} · ${h.desc || h.num_parte}</span></div>
+    <div class="detail-row"><span class="detail-key">Técnico</span><span class="detail-val">${h.prestado_a}</span></div>
+    <div class="detail-row"><span class="detail-key">Prestada desde</span><span class="detail-val">${h.prestado_desde || '—'}</span></div>
+    ${mov ? `<div class="detail-row"><span class="detail-key">Dev. esperada</span><span class="detail-val">${mov.fecha_dev_esperada}</span></div>` : ''}
+  `;
+
+  currentMovimientoId = mov ? mov.id : null;
+  closeModal('modalDetalle');
+  openModal('modalDevolucion');
+}
+
+function confirmarDevolucion() {
+  const h = DB.inventario.find(x => x.id === currentToolId);
+  if(!h) return;
+
+  const ahora = new Date();
+  const tecnico = h.prestado_a;
+
+  h.prestado = false;
+  h.prestado_a = null;
+  h.prestado_desde = null;
+
+  const mov = DB.movimientos.find(m => m.id === currentMovimientoId);
+  if(mov) {
+    mov.estado = 'DEVUELTO';
+    mov.fecha_devolucion = ahora.toISOString();
+  }
+
+  DB.movimientos.unshift({
+    id: 'DEV-' + ahora.toISOString().replace(/[^0-9]/g,'').slice(0,14),
+    tipo: 'DEVOLUCION',
+    tool_id: currentToolId,
+    tool_desc: h.desc || h.num_parte || h.num_pieza,
+    tool_ubicacion: h.ubicacion,
+    tecnico: tecnico,
+    fecha_prestamo: mov ? mov.fecha_prestamo : null,
+    fecha_dev_esperada: mov ? mov.fecha_dev_esperada : null,
+    fecha_devolucion: ahora.toISOString(),
+    estado: 'DEVUELTO',
+  });
+
+  saveDB();
+  closeModal('modalDevolucion');
+  renderInventario();
+  renderHistorial();
+  renderDashboard();
+  updateHeader();
+
+  showToast(`↩️ Devolución registrada`, 'success');
+}
+
+// ─── HISTORIAL ────────────────────────────────────────────────
+function renderHistorial() {
+  const list = document.getElementById('historialList');
+  if(!DB.movimientos.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Sin movimientos registrados</div></div>`;
+    return;
+  }
+
+  list.innerHTML = DB.movimientos.slice(0, 100).map(m => {
+    const esPrestamo = m.tipo === 'PRESTAMO';
+    const fecha = new Date(m.tipo === 'DEVOLUCION' ? m.fecha_devolucion : m.fecha_prestamo);
+    const fechaStr = fecha.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const badge = esPrestamo
+      ? `<span class="tool-status-badge badge-prestado">Préstamo</span>`
+      : `<span class="tool-status-badge badge-disponible">Devolución</span>`;
+
+    return `<div class="historial-item ${esPrestamo ? 'prestamo' : 'devolucion'}">
+      <div class="historial-header">
+        <div class="historial-tipo">${esPrestamo ? '→ Préstamo' : '← Devolución'}</div>
+        ${badge}
+      </div>
+      <div class="detail-row" style="padding:6px 0">
+        <span class="detail-key">Herramienta</span>
+        <span class="detail-val" style="font-size:13px">#${m.tool_id} · ${m.tool_desc}</span>
+      </div>
+      <div class="detail-row" style="padding:6px 0">
+        <span class="detail-key">Técnico</span>
+        <span class="detail-val" style="font-size:13px">${m.tecnico}</span>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--bmw-silver);margin-top:6px">${fechaStr} · ${m.tool_ubicacion}</div>
+      ${m.observaciones ? `<div style="font-size:12px;color:var(--bmw-silver);margin-top:4px">📝 ${m.observaciones}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────
+function renderDashboard() {
+  const disponibles = DB.inventario.filter(h => !h.prestado).length;
+  const prestados   = DB.inventario.filter(h => h.prestado).length;
+  const total       = DB.inventario.length;
+
+  const hoy = new Date().toDateString();
+  const movHoy = DB.movimientos.filter(m => {
+    const f = new Date(m.tipo === 'DEVOLUCION' ? m.fecha_devolucion : m.fecha_prestamo);
+    return f.toDateString() === hoy;
+  }).length;
+
+  document.getElementById('kpiDisponibles').textContent = disponibles;
+  document.getElementById('kpiPrestados').textContent   = prestados;
+  document.getElementById('kpiTotal').textContent       = total;
+  document.getElementById('kpiMovHoy').textContent      = movHoy;
+
+  // Préstamos activos
+  const activos = DB.inventario.filter(h => h.prestado);
+  const activosEl = document.getElementById('prestamosActivos');
+  if(!activos.length) {
+    activosEl.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">Sin préstamos activos</div></div>`;
+    return;
+  }
+  activosEl.innerHTML = activos.map(h => `
+    <div class="historial-item prestamo" onclick="openDetalle(${h.id})" style="cursor:pointer">
+      <div class="historial-header">
+        <span style="font-family:var(--font-display);font-weight:700">#${h.id} · ${h.desc || h.num_parte}</span>
+        <span class="tool-status-badge badge-prestado">Activo</span>
+      </div>
+      <div style="font-size:13px;color:var(--bmw-silver);margin-top:4px">
+        👤 ${h.prestado_a} · 📍 ${h.ubicacion}
+      </div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--bmw-silver);margin-top:4px">${h.prestado_desde || ''}</div>
+    </div>
+  `).join('');
+}
+
+// ─── HEADER ───────────────────────────────────────────────────
+function updateHeader() {
+  const prestados = DB.inventario.filter(h => h.prestado).length;
+  const total = DB.inventario.length;
+  document.getElementById('headerCount').textContent =
+    prestados > 0 ? `${prestados} prestadas` : `${total} herr.`;
+}
+
+// ─── MODALES ─────────────────────────────────────────────────
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Cerrar al tocar overlay
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if(e.target === this) closeModal(this.id);
+  });
+});
+
+// ─── TOAST ────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = 'toast', 3000);
+}
+
+// ─── START ────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
