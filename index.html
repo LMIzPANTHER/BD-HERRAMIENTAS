@@ -367,8 +367,8 @@ function renderD(){
 const acts=DB.mov.filter(m=>m.st==='PRESTADO');
 document.getElementById('k2').textContent=acts.length;
 document.getElementById('k3').textContent=DB.inv.length;
-let libres=0;DB.inv.forEach(h=>{if(!isIns(h))libres+=getDisp(h.id);});
-document.getElementById('k1').textContent=libres;
+let libresH=0,libresP=0;DB.inv.forEach(h=>{if(!isIns(h)){const d=getDisp(h.id);if(d>0)libresH++;libresP+=d;}});
+document.getElementById('k1').innerHTML=libresH+'<div style="font-size:11px;font-weight:400;color:#4ADE80;margin-top:1px">'+libresP+' piezas</div>';
 const hoy=new Date().toDateString();
 document.getElementById('k4').textContent=DB.mov.filter(m=>new Date(m.fp).toDateString()===hoy).length;
 const el=document.getElementById('pA');
