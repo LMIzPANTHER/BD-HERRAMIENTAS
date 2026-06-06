@@ -346,3 +346,18 @@ function onOpen() {
     .addItem('Instalar triggers automaticos', 'instalarTriggers')
     .addToUi();
 }
+function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  
+  if (data.accion === 'ALTA_HERRAMIENTA') {
+    const ss = SpreadsheetApp.openById('1eXBSVybHtiEhuf3S0e-x4Bik9WDUTHdwJUS_-8A-74A');
+    const hoja = ss.getSheetByName('HERRAMIENTAS');
+    hoja.appendRow([
+      data.id, '', data.np, '', data.tp, data.ds,
+      data.gr, data.ub, data.ct, data.ct, 'ACTIVO',
+      '', '', '', data.fecha_alta
+    ]);
+    return ContentService.createTextOutput('OK');
+  }
+  // ...resto de tu doPost existente
+}
