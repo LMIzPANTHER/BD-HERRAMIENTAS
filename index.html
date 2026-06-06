@@ -216,9 +216,7 @@ import {
   getFirestore, collection, addDoc, onSnapshot,
   doc, updateDoc, query, orderBy, serverTimestamp, getDocs
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import {
-  getStorage, ref as sRef, uploadBytes, getDownloadURL
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+// Storage: plan Spark no incluye — fotos en localStorage
 
 const firebaseConfig = {
   apiKey: "AIzaSyAfEAm3xVyC5vNrovm7Av4nedAzmZMkWFQ",
@@ -231,7 +229,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
-const storage = getStorage(app);
+// storage no disponible en Spark
 
 // ============================================================
 // CATÁLOGO BASE — 875 herramientas (solo lectura, embebido)
@@ -300,7 +298,7 @@ function startListeners(){
     document.getElementById('syncBanner').classList.add('show');
   });
 
-  // Listener fotos
+  // Listener fotos (URL guardada en Firestore por ImgBB)
   onSnapshot(collection(db,'inventario_fotos'), (snap)=>{
     snap.docs.forEach(d=>{
       const data=d.data();
@@ -320,7 +318,13 @@ function init(){
   document.getElementById('selTC').innerHTML=ops;
   const tom=new Date(); tom.setDate(tom.getDate()+1);
   document.getElementById('fDev').value=tom.toISOString().split('T')[0];
-  render(); updH();
+  // Cargar fotos de localStorage
+  RAW.forEach(h=>{
+    try{
+      const f=localStorage.getItem('bmw_foto_'+h.id);
+      if(f) h.foto=f;
+    }catch(ex){}
+  });
   startListeners();
   fbReady=true;
 }
@@ -418,17 +422,29 @@ function openD(id){
 }
 
 // ============================================================
-// FOTO — Firebase Storage
+// FOTO — ImgBB (gratuito, sin tarjeta) + URL en Firestore
+// API key pública de ImgBB — reemplazar con la tuya en imgbb.com
 // ============================================================
+const IMGBB_KEY = 'bd9c6a7e1f5d4c8b9a2e3f7d1c5b8a4e'; // reemplazar
 async function upFoto(e){
   const f=e.target.files[0]; if(!f||!cTool) return;
   toast('⬆️ Subiendo foto…');
   try {
-    const path=`fotos/${cTool}_${Date.now()}`;
-    const storageRef=sRef(storage, path);
-    await uploadBytes(storageRef, f);
-    const url=await getDownloadURL(storageRef);
-    // Guardar en Firestore inventario_fotos
+    // Convertir a base64
+    const b64 = await new Promise((res,rej)=>{
+      const r=new FileReader();
+      r.onload=()=>res(r.result.split(',')[1]);
+      r.onerror=rej;
+      r.readAsDataURL(f);
+    });
+    // Upload a ImgBB
+    const fd=new FormData();
+    fd.append('image', b64);
+    const resp = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:'POST',body:fd});
+    const data = await resp.json();
+    if(!data.success) throw new Error(data.error?.message||'ImgBB error');
+    const url = data.data.display_url;
+    // Guardar URL en Firestore (colección inventario_fotos)
     await addDoc(collection(db,'inventario_fotos'),{tid:cTool, url, ts:serverTimestamp()});
     // Actualizar local inmediato
     window.RAW_MAP[cTool].foto=url;
@@ -436,10 +452,22 @@ async function upFoto(e){
     document.getElementById('pImg').style.display='block';
     document.getElementById('pPh').style.display='none';
     render();
-    toast('📸 Foto guardada — todos verán esta imagen','success');
+    toast('📸 Foto guardada — todos la verán','success');
   } catch(err){
-    console.error(err);
-    toast('Error al subir foto','error');
+    console.error('upFoto error:',err);
+    // Fallback: guardar en localStorage si ImgBB falla
+    const r=new FileReader();
+    r.onload=ev=>{
+      const h=window.RAW_MAP[cTool]; if(!h) return;
+      h.foto=ev.target.result;
+      try{ localStorage.setItem('bmw_foto_'+cTool, ev.target.result); }catch(ex){}
+      document.getElementById('pImg').src=h.foto;
+      document.getElementById('pImg').style.display='block';
+      document.getElementById('pPh').style.display='none';
+      render();
+      toast('📸 Foto guardada localmente (sin internet)','success');
+    };
+    r.readAsDataURL(f);
   }
 }
 
@@ -534,17 +562,49 @@ async function doCons(){
 }
 
 // ============================================================
-// ALTA — append RAW local (no Firebase en v1)
+// ALTA — Firestore (herramientas_nuevas) + Webhook → Google Sheets
 // ============================================================
-function addTool(){
-  const ds=document.getElementById('aD').value.trim(), ub=document.getElementById('aU').value.trim(), ct=parseInt(document.getElementById('aC').value);
+// URL del webhook de Apps Script (tu doPost en Code.gs)
+const WEBHOOK_URL = 'https://script.google.com/macros/s/TU_DEPLOYMENT_ID/exec';
+
+async function addTool(){
+  const ds=document.getElementById('aD').value.trim();
+  const ub=document.getElementById('aU').value.trim();
+  const ct=parseInt(document.getElementById('aC').value);
   if(!ds||!ub||!ct||ct<1){ toast('Completa los campos obligatorios','error'); return; }
+  const btn=document.querySelector('#v-add .btn-primary');
+  btn.disabled=true; btn.textContent='Guardando…';
+  const np=document.getElementById('aP').value.trim();
+  const gr=document.getElementById('aG').value.trim();
+  const tp=document.getElementById('aT').value;
   const nid=Math.max(...RAW.map(h=>h.id))+1;
-  const nh={id:nid,np:document.getElementById('aP').value.trim(),nz:'',tp:document.getElementById('aT').value,ds,gr:document.getElementById('aG').value.trim(),ub,ct,_ctBase:ct,foto:null};
-  RAW.push(nh); window.RAW_MAP[nid]=nh;
-  ['aD','aP','aG','aU'].forEach(x=>document.getElementById(x).value='');
-  document.getElementById('aC').value='1';
-  toast('✅ #'+nid+' guardado localmente','success'); sv('inv');
+  const payload={
+    accion:'ALTA_HERRAMIENTA',
+    id:nid, np, nz:'', tp, ds, gr, ub, ct,
+    fecha_alta:new Date().toISOString()
+  };
+  try {
+    // 1. Guardar en Firestore (colección herramientas_nuevas para auditoria)
+    await addDoc(collection(db,'herramientas_nuevas'), {...payload, ts:serverTimestamp()});
+    // 2. Enviar a Google Sheets via webhook (no bloquear si falla)
+    fetch(WEBHOOK_URL, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    }).catch(()=>{});
+    // 3. Agregar al RAW local para uso inmediato en esta sesión
+    const nh={id:nid,np,nz:'',tp,ds,gr,ub,ct,_ctBase:ct,foto:null};
+    RAW.push(nh); window.RAW_MAP[nid]=nh;
+    ['aD','aP','aG','aU'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('aC').value='1';
+    toast('✅ #'+nid+' guardado en Firestore + enviado a Sheets','success');
+    sv('inv');
+  } catch(err){
+    console.error(err);
+    toast('Error al guardar — revisa conexión','error');
+  }
+  btn.disabled=false; btn.textContent='Guardar en inventario';
 }
 
 // ============================================================
@@ -623,6 +683,11 @@ window.om=om; window.cm=cm;
 // ============================================================
 // ARRANQUE
 // ============================================================
+// Render inmediato con RAW (sin esperar Firebase)
+// El inventario siempre se muestra; Firebase solo actualiza estados
+const dot=document.getElementById('sDot');
+dot.className='status-dot connecting';
+render(); updH();
 init();
 
 </script>
