@@ -242,7 +242,7 @@ const db  = getFirestore(app);
 // CATÁLOGO DINÁMICO — Google Sheets
 // ============================================================
 let RAW = []; // Ahora empieza vacío y se llena de Google Sheets
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymPcyM7E-ya0QNUHjPYmqMn932b5FalNSieoqq8QvuDg098qv0ouTnU1ZCRHQCBA2u/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxhNKNe3ukm33wvd-YRZAOLqOw_PlFqazr1zThIjUbmDdtF8BFS_v7r2Vy2ULYHgsBi/exec';
 // ============================================================
 // ESTADO GLOBAL
 // ============================================================
@@ -566,7 +566,7 @@ async function doCons(){
 // ALTA — Firestore (herramientas_nuevas) + Webhook → Google Sheets
 // ============================================================
 // URL del webhook de Apps Script (tu doPost en Code.gs)
-const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxhNKNe3ukm33wvd-YRZAOLqOw_PlFqazr1zThIjUbmDdtF8BFS_v7r2Vy2ULYHgsBi/exec';
+const WEBHOOK_URL = 'https://script.google.com/macros/s/TU_DEPLOYMENT_ID/exec';
 
 async function addTool(){
   const ds=document.getElementById('aD').value.trim();
