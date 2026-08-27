@@ -385,15 +385,23 @@ function filtered(){
     if(cFilt==='insumo' && !ins) return false;
     if(!cSearch) return true;
     
-    const q = cSearch.trim().toLowerCase();
+    // Limpiamos la búsqueda quitando espacios para que busque por dígitos puros
+    const q = cSearch.toLowerCase().replace(/\s+/g, '');
+    if(!q) return true;
     
-    const idStr = String(h.id || '').toLowerCase();
-    const npStr = String(h.np || '').toLowerCase();
-    const nzStr = String(h.nz || '').toLowerCase();
-    const dsStr = String(h.ds || '').toLowerCase();
+    // Unimos en una sola cadena TODAS las propiedades posibles de la herramienta
+    const searchable = [
+      h.id,
+      h.np,
+      h.nz,
+      h.ds,
+      h.ub,
+      h.gr,
+      h.tp
+    ].map(val => String(val || '').toLowerCase().replace(/\s+/g, '')).join('|');
     
-    // Busca directamente si los dígitos coinciden con el ID, Parte Familia o Parte Pieza
-    return idStr.includes(q) || npStr.includes(q) || nzStr.includes(q) || dsStr.includes(q);
+    // Si la cadena contiene los dígitos o texto ingresados, la devuelve de inmediato
+    return searchable.includes(q);
   });
 }
 function render(){
