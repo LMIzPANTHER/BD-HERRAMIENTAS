@@ -384,9 +384,21 @@ function filtered(){
     if(cFilt==='prestado' && (ins||u===0)) return false;
     if(cFilt==='insumo' && !ins) return false;
     if(!cSearch) return true;
-    const q=cSearch;
-    const s = (v) => String(v || '').toLowerCase();
-    return s(h.id).includes(q) || s(h.np).includes(q) || s(h.nz).includes(q) || s(h.ds).includes(q) || s(h.ub).includes(q) || s(h.gr).includes(q);
+    
+    const q = cSearch.toLowerCase();
+    
+    // Une todos los valores posibles de la herramienta en un solo texto gigante de búsqueda
+    const searchableText = [
+      h.id,
+      h.np,
+      h.nz,
+      h.tp,
+      h.ds,
+      h.gr,
+      h.ub
+    ].map(v => String(v || '').toLowerCase()).join(' ');
+    
+    return searchableText.includes(q);
   });
 }
 
