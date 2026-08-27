@@ -328,12 +328,24 @@ async function init(){
 
   try {
     const res = await fetch(SCRIPT_URL);
-    RAW = await res.json();
+    const data = await res.json();
+
+    // Mapeo blindado para asegurar que np y nz queden listos para búsqueda por dígitos
+    RAW = data.map(r => ({
+      id: parseInt(r.id),
+      np: r.np !== undefined && r.np !== null ? String(r.np).trim() : "",
+      nz: r.nz !== undefined && r.nz !== null ? String(r.nz).trim() : "",
+      tp: r.tp ? String(r.tp).trim() : "",
+      ds: r.ds ? String(r.ds).trim() : "",
+      gr: r.gr ? String(r.gr).trim() : "",
+      ub: r.ub ? String(r.ub).trim() : "",
+      ct: parseInt(r.ct) || 1,
+      _ctBase: parseInt(r.ct) || 1,
+      foto: null
+    }));
 
     window.RAW_MAP = {};
     RAW.forEach(r => {
-      r._ctBase = r.ct; 
-      r.foto = null;
       try { const f=localStorage.getItem('bmw_foto_'+r.id); if(f) r.foto=f; } catch(ex){}
       window.RAW_MAP[r.id] = r;
     });
@@ -385,11 +397,10 @@ function filtered(){
     if(cFilt==='insumo' && !ins) return false;
     if(!cSearch) return true;
     
-    // Limpiamos la búsqueda quitando espacios para que busque por dígitos puros
-    const q = cSearch.toLowerCase().replace(/\s+/g, '');
+    // Limpieza de caracteres para permitir búsqueda exacta de dígitos (ej. 610110)
+    const q = cSearch.toLowerCase().replace(/[^a-z0-9]/g, '');
     if(!q) return true;
     
-    // Unimos en una sola cadena TODAS las propiedades posibles de la herramienta
     const searchable = [
       h.id,
       h.np,
@@ -398,12 +409,12 @@ function filtered(){
       h.ub,
       h.gr,
       h.tp
-    ].map(val => String(val || '').toLowerCase().replace(/\s+/g, '')).join('|');
+    ].map(val => String(val || '').toLowerCase().replace(/[^a-z0-9]/g, '')).join('|');
     
-    // Si la cadena contiene los dígitos o texto ingresados, la devuelve de inmediato
     return searchable.includes(q);
   });
 }
+
 function render(){
   const g=document.getElementById('tG'), list=filtered();
   document.getElementById('rCount').textContent=list.length+' de '+RAW.length+' herramientas';
