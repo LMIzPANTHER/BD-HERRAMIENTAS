@@ -19,7 +19,7 @@
 body{background:var(--bmw-dark);color:var(--bmw-white);font-family:var(--font-display);font-size:16px;line-height:1.5;min-height:100vh;overflow-x:hidden}
 .app-header{position:sticky;top:0;z-index:100;background:var(--bmw-blue);border-bottom:2px solid var(--bmw-red);padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 20px rgba(0,0,0,.6)}
 .header-brand{display:flex;align-items:center;gap:10px}
-.bmw-roundel{width:32px;height:32px;flex-shrink:0}
+.bmw-roundel{width:45px;height:45px;object-fit:contain;flex-shrink:0}
 .header-text h1{font-size:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;line-height:1}
 .header-text span{font-size:10px;color:var(--bmw-silver);letter-spacing:.15em;text-transform:uppercase}
 .header-status{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;color:var(--bmw-silver)}
@@ -114,7 +114,7 @@ body{background:var(--bmw-dark);color:var(--bmw-white);font-family:var(--font-di
 
 <header class="app-header">
 <div class="header-brand">
-<img class="bmw-roundel" src="https://1000marcas.net/wp-content/uploads/2019/12/BMW-logo.png" alt="BMW" style="object-fit: contain; width: 80px; height: 80px;">
+<img class="bmw-roundel" src="https://1000marcas.net/wp-content/uploads/2019/12/BMW-logo.png" alt="BMW">
 <div class="header-text"><h1>Herramientas</h1><span>Lindavista · Postventa</span></div>
 </div>
 <div class="header-status"><div class="status-dot connecting" id="sDot"></div><span id="hdrC">Conectando…</span></div>
@@ -183,6 +183,7 @@ body{background:var(--bmw-dark);color:var(--bmw-white);font-family:var(--font-di
 <button class="btn btn-primary" onclick="addTool()">Guardar en inventario</button>
 </div>
 </div></div>
+
 <!-- MODALES -->
 <div class="modal-overlay" id="mPw"><div class="modal"><div class="modal-header"><div class="modal-title">Acceso restringido</div><button class="modal-close" onclick="cm('mPw')">✕</button></div><div class="modal-body">
 <p style="color:var(--bmw-silver);font-size:13px;margin-bottom:12px">Código de administrador:</p>
@@ -233,7 +234,6 @@ import {
   getFirestore, collection, addDoc, onSnapshot,
   doc, updateDoc, query, orderBy, serverTimestamp, getDocs
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-// Storage: plan Spark no incluye — fotos en localStorage
 
 const firebaseConfig = {
   apiKey: "AIzaSyAfEAm3xVyC5vNrovm7Av4nedAzmZMkWFQ",
@@ -246,27 +246,19 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
-// storage no disponible en Spark
 
 // ============================================================
-// CATÁLOGO BASE — 875 herramientas (solo lectura, embebido)
+// CATÁLOGO DINÁMICO — Google Sheets (Única Declaración)
 // ============================================================
-// ============================================================
-// CATÁLOGO DINÁMICO — Google Sheets
-// ============================================================
-let RAW = []; // Ahora empieza vacío y se llena de Google Sheets
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxhNKNe3ukm33wvd-YRZAOLqOw_PlFqazr1zThIjUbmDdtF8BFS_v7r2Vy2ULYHgsBi/exec';
+let RAW = []; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNKNe3ukm33wvd-YRZAOLqOw_PIfqazr1zThIjUbmDdtF8BFS_v7r2Vy2ULYHgsBI/exec';
+
 // ============================================================
 // ESTADO GLOBAL
 // ============================================================
 const TECNICOS=['Hugo','Denilson','Angel','Oswaldo','Cristhian','Juvenal','Manuel','Carlos','Toño','Otro'];
 window.RAW_MAP = {};
-RAW.forEach(r => {
-  r._ctBase = r.ct; // guardar stock original para insumos
-  r.foto = null;
-  window.RAW_MAP[r.id] = r;
-});
-window.MOV = []; // movimientos desde Firestore
+window.MOV = []; 
 let cTool=null, cFilt='todos', cSearch='', pendV='';
 let fbReady = false;
 
@@ -295,7 +287,6 @@ function recalcInsumos(){
 // FIREBASE — Listeners en tiempo real
 // ============================================================
 function startListeners(){
-  // Listener movimientos
   const qMov = query(collection(db,'movimientos'), orderBy('fp','desc'));
   onSnapshot(qMov, (snap)=>{
     window.MOV = snap.docs.map(d=>({...d.data(), _fid:d.id}));
@@ -303,7 +294,6 @@ function startListeners(){
     render(); updH();
     if(document.getElementById('v-dash').classList.contains('active')) renderD();
     if(document.getElementById('v-hist').classList.contains('active')) renderH();
-    // dot verde
     const dot=document.getElementById('sDot');
     dot.className='status-dot';
     document.getElementById('syncBanner').classList.remove('show');
@@ -314,7 +304,6 @@ function startListeners(){
     document.getElementById('syncBanner').classList.add('show');
   });
 
-  // Listener fotos (URL guardada en Firestore por ImgBB)
   onSnapshot(collection(db,'inventario_fotos'), (snap)=>{
     snap.docs.forEach(d=>{
       const data=d.data();
@@ -335,15 +324,12 @@ async function init(){
   const tom=new Date(); tom.setDate(tom.getDate()+1);
   document.getElementById('fDev').value=tom.toISOString().split('T')[0];
   
-  // Mensaje de carga mientras se conecta a Google Sheets
   document.getElementById('tG').innerHTML = '<div class="empty-state"><div class="empty-text">Sincronizando inventario con Google Sheets... ⏳</div></div>';
 
   try {
-    // 1. Descargar catálogo
     const res = await fetch(SCRIPT_URL);
     RAW = await res.json();
 
-    // 2. Procesar datos y cargar fotos
     window.RAW_MAP = {};
     RAW.forEach(r => {
       r._ctBase = r.ct; 
@@ -352,7 +338,6 @@ async function init(){
       window.RAW_MAP[r.id] = r;
     });
 
-    // 3. Conectar a Firebase para ver los préstamos
     startListeners();
     fbReady = true;
 
@@ -400,7 +385,7 @@ function filtered(){
     if(cFilt==='insumo' && !ins) return false;
     if(!cSearch) return true;
     const q=cSearch;
-    const s = (v) => String(v || '').toLowerCase(); // Convierte todo a texto seguro
+    const s = (v) => String(v || '').toLowerCase();
     return s(h.id).includes(q)||s(h.np).includes(q)||s(h.nz).includes(q)||s(h.ds).includes(q)||s(h.ub).includes(q)||s(h.gr).includes(q);
   });
 }
@@ -419,7 +404,6 @@ function render(){
     else{badge=`<span class="badge badge-bad">En uso</span>`;cls='agotado';}
     const nm=nombre(h);
     
-    // Mostrar ambos números si existen
     let ref = '';
     if(h.np && h.nz) ref = h.np + ' / ' + h.nz;
     else if(h.np) ref = h.np;
@@ -432,6 +416,7 @@ function render(){
     return`<div class="tool-card ${cls}" onclick="openD(${h.id})">${fotoEl}<div class="tool-info"><div class="tool-id">#${h.id} · ${h.ub||'—'}</div><div class="tool-name">${nm}</div><div class="tool-meta">${ref} · Grp ${h.gr||'—'}</div></div>${badge}</div>`;
   }).join('')+(list.length>100?`<div style="text-align:center;padding:16px;color:var(--bmw-silver);font-size:12px">Mostrando 100 de ${list.length}. Usa el buscador para filtrar.</div>`:'');
 }
+
 // ============================================================
 // DETALLE
 // ============================================================
@@ -463,31 +448,26 @@ function openD(id){
 }
 
 // ============================================================
-// FOTO — ImgBB (gratuito, sin tarjeta) + URL en Firestore
-// API key pública de ImgBB — reemplazar con la tuya en imgbb.com
+// FOTO — ImgBB
 // ============================================================
-const IMGBB_KEY = 'bd9c6a7e1f5d4c8b9a2e3f7d1c5b8a4e'; // reemplazar
+const IMGBB_KEY = 'bd9c6a7e1f5d4c8b9a2e3f7d1c5b8a4e'; 
 async function upFoto(e){
   const f=e.target.files[0]; if(!f||!cTool) return;
   toast('⬆️ Subiendo foto…');
   try {
-    // Convertir a base64
     const b64 = await new Promise((res,rej)=>{
       const r=new FileReader();
       r.onload=()=>res(r.result.split(',')[1]);
       r.onerror=rej;
       r.readAsDataURL(f);
     });
-    // Upload a ImgBB
     const fd=new FormData();
     fd.append('image', b64);
     const resp = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:'POST',body:fd});
     const data = await resp.json();
     if(!data.success) throw new Error(data.error?.message||'ImgBB error');
     const url = data.data.display_url;
-    // Guardar URL en Firestore (colección inventario_fotos)
     await addDoc(collection(db,'inventario_fotos'),{tid:cTool, url, ts:serverTimestamp()});
-    // Actualizar local inmediato
     window.RAW_MAP[cTool].foto=url;
     document.getElementById('pImg').src=url;
     document.getElementById('pImg').style.display='block';
@@ -496,7 +476,6 @@ async function upFoto(e){
     toast('📸 Foto guardada — todos la verán','success');
   } catch(err){
     console.error('upFoto error:',err);
-    // Fallback: guardar en localStorage si ImgBB falla
     const r=new FileReader();
     r.onload=ev=>{
       const h=window.RAW_MAP[cTool]; if(!h) return;
@@ -513,7 +492,7 @@ async function upFoto(e){
 }
 
 // ============================================================
-// PRÉSTAMO — Firestore
+// PRÉSTAMO / DEVOLUCIÓN / CONSUMO
 // ============================================================
 function openPr(id){
   const h=window.RAW_MAP[id];
@@ -525,6 +504,29 @@ function openPr(id){
   const tom=new Date(); tom.setDate(tom.getDate()+1);
   document.getElementById('fDev').value=tom.toISOString().split('T')[0];
   cm('mDet'); om('mPr');
+}
+
+function openCon(id){
+  const h=window.RAW_MAP[id];
+  document.getElementById('conRef').textContent=`#${h.id} · ${nombre(h)}`;
+  document.getElementById('selTC').value='';
+  document.getElementById('extNC').value='';
+  document.getElementById('extGC').style.display='none';
+  cm('mDet'); om('mCon');
+}
+
+function openDev(id){
+  const h=window.RAW_MAP[id];
+  const act = window.MOV.filter(m=>m.tid===id && m.st==='PRESTADO');
+  const dL = document.getElementById('devL');
+  dL.innerHTML = act.length ? act.map(m=>{
+    const ts = m.fp?.toDate?m.fp.toDate():new Date(m.fp);
+    return `<div style="background:var(--bmw-card);padding:10px;border-radius:var(--radius);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+      <div><b>👤 ${m.tec}</b><br><span style="font-size:11px;color:var(--bmw-silver)">Prestado: ${ts.toLocaleDateString('es-MX')}</span></div>
+      <button class="btn btn-success" style="width:auto;padding:8px 12px;margin:0" onclick="doDev('${m._fid}')">Devolver</button>
+    </div>`;
+  }).join('') : '<div class="empty-state"><div class="empty-text">Sin préstamos activos</div></div>';
+  cm('mDet'); om('mDev');
 }
 
 async function doPrest(){
@@ -578,9 +580,6 @@ async function doCons(){
 // ============================================================
 // ALTA — Firestore (herramientas_nuevas) + Webhook → Google Sheets
 // ============================================================
-// URL del webhook de Apps Script (tu doPost en Code.gs)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNKNe3ukm33wvd-YRZAOLQow_PIfqazr1zThIjUbmDdtF8BFS_v7r2Vy2ULYHgsBI/exec';;
-
 async function addTool(){
   const ds=document.getElementById('aD').value.trim();
   const ub=document.getElementById('aU').value.trim();
@@ -590,7 +589,6 @@ async function addTool(){
   const btn=document.querySelector('#v-add .btn-primary');
   btn.disabled=true; btn.textContent='Guardando…';
   
-  // Extraemos ambos números de parte
   const np=document.getElementById('aPF').value.trim();
   const nz=document.getElementById('aPP').value.trim();
   const gr=document.getElementById('aG').value.trim();
@@ -607,7 +605,6 @@ async function addTool(){
   try {
     await addDoc(collection(db,'herramientas_nuevas'), {...payload, ts:serverTimestamp()});
     
-    // Apunta dinámicamente a tu Apps Script
     fetch(SCRIPT_URL, {
       method:'POST',
       mode:'no-cors',
@@ -678,7 +675,7 @@ function updH(){
 }
 
 // ============================================================
-// UTILS
+// UTILS & INTERFAZ DINÁMICA
 // ============================================================
 function om(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
 function cm(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
@@ -691,10 +688,7 @@ function toast(m,t=''){
   clearTimeout(tT); tT=setTimeout(()=>e.className='toast',3000);
 }
 
-// ============================================================
-// Exponer al window para onclick handlers
-// ============================================================
-  function toggleCamposAlta() {
+function toggleCamposAlta() {
   const tipo = document.getElementById('aT').value;
   const cFam = document.getElementById('cajaFam');
   const cPza = document.getElementById('cajaPza');
@@ -704,6 +698,10 @@ function toast(m,t=''){
   else if (tipo === 'AMBOS') { cFam.style.display='block'; cPza.style.display='block'; }
   else if (tipo === 'GENERICO') { cFam.style.display='none'; cPza.style.display='none'; }
 }
+
+// ============================================================
+// EXPOSICIÓN GLOBAL
+// ============================================================
 window.toggleCamposAlta = toggleCamposAlta;
 window.sv=sv; window.guard=guard; window.checkPw=checkPw;
 window.doSearch=doSearch; window.filt=filt; window.openD=openD;
@@ -716,13 +714,10 @@ window.om=om; window.cm=cm;
 // ============================================================
 // ARRANQUE
 // ============================================================
-// Render inmediato con RAW (sin esperar Firebase)
-// El inventario siempre se muestra; Firebase solo actualiza estados
 const dot=document.getElementById('sDot');
 dot.className='status-dot connecting';
 render(); updH();
 init();
-
 </script>
 </body>
 </html>
