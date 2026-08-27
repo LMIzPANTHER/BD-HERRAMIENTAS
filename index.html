@@ -159,17 +159,30 @@ body{background:var(--bmw-dark);color:var(--bmw-white);font-family:var(--font-di
 <div class="view" id="v-add"><div class="main-content">
 <div class="section-title">Alta de inventario</div>
 <div style="background:var(--bmw-card);padding:16px;border-radius:var(--radius-lg);border:var(--border)">
-<div class="form-group"><label class="form-label">Tipo *</label><select class="form-control" id="aT"><option value="FAMILIA_COMPLETA">Herramienta (Familia)</option><option value="PIEZA_INDIVIDUAL">Herramienta (Pieza)</option><option value="AMBOS">Ambos (Familia y Pieza)</option><option value="GENERICO">Insumo</option></select></div>
+
+<div class="form-group">
+  <label class="form-label">Tipo *</label>
+  <select class="form-control" id="aT" onchange="toggleCamposAlta()">
+    <option value="FAMILIA_COMPLETA">Herramienta (Familia)</option>
+    <option value="PIEZA_INDIVIDUAL">Herramienta (Pieza)</option>
+    <option value="AMBOS">Ambos (Familia y Pieza)</option>
+    <option value="GENERICO">Insumo (Sin número de parte)</option>
+  </select>
+</div>
+
 <div class="form-group"><label class="form-label">Descripción *</label><input class="form-control" id="aD" placeholder="Ej. Dado de culata N20"></div>
 <div class="form-group"><label class="form-label">Ubicación *</label><input class="form-control" id="aU" placeholder="Ej. A4"></div>
-<div class="form-group"><label class="form-label">Núm. Parte (Familia)</label><input class="form-control" id="aPF" placeholder="Ej. 83300496223"></div>
-<div class="form-group"><label class="form-label">Núm. Parte (Pieza)</label><input class="form-control" id="aPP" placeholder="Ej. 613220"></div>
+
+<!-- Contenedores dinámicos -->
+<div class="form-group" id="cajaFam"><label class="form-label">Núm. Parte (Familia)</label><input class="form-control" id="aPF" placeholder="Ej. 83300496223"></div>
+<div class="form-group" id="cajaPza" style="display:none;"><label class="form-label">Núm. Parte (Pieza)</label><input class="form-control" id="aPP" placeholder="Ej. 613220"></div>
+
 <div class="form-group"><label class="form-label">Grupo contable</label><input class="form-control" id="aG" placeholder="Ej. 11"></div>
 <div class="form-group"><label class="form-label">Cantidad *</label><input type="number" class="form-control" id="aC" value="1" min="1"></div>
+
 <button class="btn btn-primary" onclick="addTool()">Guardar en inventario</button>
 </div>
 </div></div>
-
 <!-- MODALES -->
 <div class="modal-overlay" id="mPw"><div class="modal"><div class="modal-header"><div class="modal-title">Acceso restringido</div><button class="modal-close" onclick="cm('mPw')">✕</button></div><div class="modal-body">
 <p style="color:var(--bmw-silver);font-size:13px;margin-bottom:12px">Código de administrador:</p>
@@ -681,6 +694,17 @@ function toast(m,t=''){
 // ============================================================
 // Exponer al window para onclick handlers
 // ============================================================
+  function toggleCamposAlta() {
+  const tipo = document.getElementById('aT').value;
+  const cFam = document.getElementById('cajaFam');
+  const cPza = document.getElementById('cajaPza');
+  
+  if (tipo === 'FAMILIA_COMPLETA') { cFam.style.display='block'; cPza.style.display='none'; }
+  else if (tipo === 'PIEZA_INDIVIDUAL') { cFam.style.display='none'; cPza.style.display='block'; }
+  else if (tipo === 'AMBOS') { cFam.style.display='block'; cPza.style.display='block'; }
+  else if (tipo === 'GENERICO') { cFam.style.display='none'; cPza.style.display='none'; }
+}
+window.toggleCamposAlta = toggleCamposAlta;
 window.sv=sv; window.guard=guard; window.checkPw=checkPw;
 window.doSearch=doSearch; window.filt=filt; window.openD=openD;
 window.openPr=openPr; window.doPrest=doPrest;
