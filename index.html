@@ -385,23 +385,17 @@ function filtered(){
     if(cFilt==='insumo' && !ins) return false;
     if(!cSearch) return true;
     
-    const q = cSearch.toLowerCase();
+    const q = cSearch.trim().toLowerCase();
     
-    // Une todos los valores posibles de la herramienta en un solo texto gigante de búsqueda
-    const searchableText = [
-      h.id,
-      h.np,
-      h.nz,
-      h.tp,
-      h.ds,
-      h.gr,
-      h.ub
-    ].map(v => String(v || '').toLowerCase()).join(' ');
+    const idStr = String(h.id || '').toLowerCase();
+    const npStr = String(h.np || '').toLowerCase();
+    const nzStr = String(h.nz || '').toLowerCase();
+    const dsStr = String(h.ds || '').toLowerCase();
     
-    return searchableText.includes(q);
+    // Busca directamente si los dígitos coinciden con el ID, Parte Familia o Parte Pieza
+    return idStr.includes(q) || npStr.includes(q) || nzStr.includes(q) || dsStr.includes(q);
   });
 }
-
 function render(){
   const g=document.getElementById('tG'), list=filtered();
   document.getElementById('rCount').textContent=list.length+' de '+RAW.length+' herramientas';
