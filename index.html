@@ -386,7 +386,7 @@ function filtered(){
     if(!cSearch) return true;
     const q=cSearch;
     const s = (v) => String(v || '').toLowerCase();
-    return s(h.id).includes(q)||s(h.np).includes(q)||s(h.nz).includes(q)||s(h.ds).includes(q)||s(h.ub).includes(q)||s(h.gr).includes(q);
+    return s(h.id).includes(q) || s(h.np).includes(q) || s(h.nz).includes(q) || s(h.ds).includes(q) || s(h.ub).includes(q) || s(h.gr).includes(q);
   });
 }
 
