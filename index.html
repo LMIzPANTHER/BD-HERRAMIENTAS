@@ -159,10 +159,11 @@ body{background:var(--bmw-dark);color:var(--bmw-white);font-family:var(--font-di
 <div class="view" id="v-add"><div class="main-content">
 <div class="section-title">Alta de inventario</div>
 <div style="background:var(--bmw-card);padding:16px;border-radius:var(--radius-lg);border:var(--border)">
-<div class="form-group"><label class="form-label">Tipo *</label><select class="form-control" id="aT"><option value="FAMILIA_COMPLETA">Herramienta (Familia)</option><option value="PIEZA_INDIVIDUAL">Herramienta (Pieza)</option><option value="GENERICO">Insumo</option></select></div>
+<div class="form-group"><label class="form-label">Tipo *</label><select class="form-control" id="aT"><option value="FAMILIA_COMPLETA">Herramienta (Familia)</option><option value="PIEZA_INDIVIDUAL">Herramienta (Pieza)</option><option value="AMBOS">Ambos (Familia y Pieza)</option><option value="GENERICO">Insumo</option></select></div>
 <div class="form-group"><label class="form-label">Descripción *</label><input class="form-control" id="aD" placeholder="Ej. Dado de culata N20"></div>
 <div class="form-group"><label class="form-label">Ubicación *</label><input class="form-control" id="aU" placeholder="Ej. A4"></div>
-<div class="form-group"><label class="form-label">Núm. Parte</label><input class="form-control" id="aP" placeholder="Ej. 83300496223"></div>
+<div class="form-group"><label class="form-label">Núm. Parte (Familia)</label><input class="form-control" id="aPF" placeholder="Ej. 83300496223"></div>
+<div class="form-group"><label class="form-label">Núm. Parte (Pieza)</label><input class="form-control" id="aPP" placeholder="Ej. 613220"></div>
 <div class="form-group"><label class="form-label">Grupo contable</label><input class="form-control" id="aG" placeholder="Ej. 11"></div>
 <div class="form-group"><label class="form-label">Cantidad *</label><input type="number" class="form-control" id="aC" value="1" min="1"></div>
 <button class="btn btn-primary" onclick="addTool()">Guardar en inventario</button>
@@ -386,7 +387,8 @@ function filtered(){
     if(cFilt==='insumo' && !ins) return false;
     if(!cSearch) return true;
     const q=cSearch;
-    return String(h.id).includes(q)||(h.np||'').toLowerCase().includes(q)||(h.nz||'').toLowerCase().includes(q)||(h.ds||'').toLowerCase().includes(q)||(h.ub||'').toLowerCase().includes(q)||(h.gr||'').toLowerCase().includes(q);
+    const s = (v) => String(v || '').toLowerCase(); // Convierte todo a texto seguro
+    return s(h.id).includes(q)||s(h.np).includes(q)||s(h.nz).includes(q)||s(h.ds).includes(q)||s(h.ub).includes(q)||s(h.gr).includes(q);
   });
 }
 
@@ -402,14 +404,21 @@ function render(){
     else if(d>0&&u===0){badge=`<span class="badge badge-ok">Libre</span>`;cls='disponible';}
     else if(d>0&&u>0){badge=`<span class="badge badge-warn">${d}/${h.ct}</span>`;cls='parcial';}
     else{badge=`<span class="badge badge-bad">En uso</span>`;cls='agotado';}
-    const nm=nombre(h), ref=h.nz||h.np||'ID-'+h.id;
+    const nm=nombre(h);
+    
+    // Mostrar ambos números si existen
+    let ref = '';
+    if(h.np && h.nz) ref = h.np + ' / ' + h.nz;
+    else if(h.np) ref = h.np;
+    else if(h.nz) ref = h.nz;
+    else ref = 'ID-'+h.id;
+
     const fotoEl=h.foto
       ?`<div class="tool-photo"><img src="${h.foto}" loading="lazy"></div>`
       :`<div class="tool-photo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--bmw-silver)"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div>`;
     return`<div class="tool-card ${cls}" onclick="openD(${h.id})">${fotoEl}<div class="tool-info"><div class="tool-id">#${h.id} · ${h.ub||'—'}</div><div class="tool-name">${nm}</div><div class="tool-meta">${ref} · Grp ${h.gr||'—'}</div></div>${badge}</div>`;
   }).join('')+(list.length>100?`<div style="text-align:center;padding:16px;color:var(--bmw-silver);font-size:12px">Mostrando 100 de ${list.length}. Usa el buscador para filtrar.</div>`:'');
 }
-
 // ============================================================
 // DETALLE
 // ============================================================
@@ -510,58 +519,30 @@ async function doPrest(){
   if(!t){ toast('Selecciona quién solicita','error'); return; }
   if(t==='Otro'&&!ext){ toast('Ingresa el nombre','error'); return; }
   const fd=document.getElementById('fDev').value; if(!fd){ toast('Fecha requerida','error'); return; }
-  const h=window.RAW_MAP[cTool], nm=t==='Otro'?ext:t;
+  const h=window.RAW_MAP[cTool], nm=t==='Otro'?ext:t, obsVal=document.getElementById('obs').value.trim();
   const btn=document.getElementById('btnPr'); btn.disabled=true; btn.textContent='Guardando…';
+  
+  const payload = { accion:'MOVIMIENTO', tipo:'PRESTAMO', tid:cTool, desc:nombre(h), ub:h.ub, tec:nm, fde:fd, obs:obsVal, st:'PRESTADO' };
+  
   try {
-    await addDoc(collection(db,'movimientos'),{
-      tipo:'PRESTAMO', tid:cTool, desc:nombre(h), ub:h.ub, tec:nm,
-      fp:serverTimestamp(), fde:fd,
-      obs:document.getElementById('obs').value.trim(),
-      st:'PRESTADO'
-    });
+    await addDoc(collection(db,'movimientos'),{ ...payload, fp:serverTimestamp() });
+    fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', body:JSON.stringify(payload) }).catch(()=>{});
     cm('mPr'); toast('✅ Préstamo registrado — '+nm,'success');
-  } catch(err){ console.error(err); toast('Error al guardar','error'); }
+  } catch(err){ toast('Error al guardar','error'); }
   btn.disabled=false; btn.textContent='Confirmar préstamo';
-}
-
-// ============================================================
-// DEVOLUCIÓN — Firestore
-// ============================================================
-function openDev(id){
-  const acts=window.MOV.filter(m=>m.tid===id&&m.st==='PRESTADO');
-  document.getElementById('devL').innerHTML=acts.map(m=>`
-<div style="background:var(--bmw-card2);padding:10px;border-radius:var(--radius);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
-<div><div style="font-weight:bold;font-size:14px">${m.tec}</div>
-<div style="font-size:11px;color:var(--bmw-silver)">${m.fp?.toDate ? m.fp.toDate().toLocaleDateString('es-MX') : new Date(m.fp).toLocaleDateString('es-MX')}</div></div>
-<button class="btn btn-success" style="width:auto;margin:0;padding:8px 14px;font-size:12px" onclick="doDev('${m._fid}')">Devolver</button>
-</div>`).join('');
-  cm('mDet'); om('mDev');
 }
 
 async function doDev(fid){
   try {
     const mDoc=window.MOV.find(m=>m._fid===fid); if(!mDoc) return;
-    // Marcar como DEVUELTO
     await updateDoc(doc(db,'movimientos',fid),{st:'DEVUELTO',fd:serverTimestamp()});
-    // Registro devolución
-    await addDoc(collection(db,'movimientos'),{
-      tipo:'DEVOLUCION', tid:mDoc.tid, desc:mDoc.desc, ub:mDoc.ub,
-      tec:mDoc.tec, fp:serverTimestamp(), st:'DEVUELTO'
-    });
+    
+    const payload = { accion:'MOVIMIENTO', tipo:'DEVOLUCION', tid:mDoc.tid, desc:mDoc.desc, ub:mDoc.ub, tec:mDoc.tec, st:'DEVUELTO' };
+    await addDoc(collection(db,'movimientos'),{ ...payload, fp:serverTimestamp() });
+    fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', body:JSON.stringify(payload) }).catch(()=>{});
+    
     cm('mDev'); toast('↩️ Devolución registrada','success');
-  } catch(err){ console.error(err); toast('Error al devolver','error'); }
-}
-
-// ============================================================
-// CONSUMO INSUMO — Firestore
-// ============================================================
-function openCon(id){
-  const h=window.RAW_MAP[id];
-  document.getElementById('conRef').textContent=`${nombre(h)} (Stock: ${h.ct})`;
-  document.getElementById('selTC').value='';
-  document.getElementById('extNC').value='';
-  document.getElementById('extGC').style.display='none';
-  cm('mDet'); om('mCon');
+  } catch(err){ toast('Error al devolver','error'); }
 }
 
 async function doCons(){
@@ -570,13 +551,14 @@ async function doCons(){
   const h=window.RAW_MAP[cTool]; if(!h||h.ct<=0){ toast('Sin stock','error'); return; }
   const nm=t==='Otro'?ext:t;
   const btn=document.getElementById('btnCon'); btn.disabled=true; btn.textContent='Guardando…';
+  
+  const payload = { accion:'MOVIMIENTO', tipo:'CONSUMO', tid:cTool, desc:nombre(h), tec:nm, st:'CONSUMIDO' };
+  
   try {
-    await addDoc(collection(db,'movimientos'),{
-      tipo:'CONSUMO', tid:cTool, desc:nombre(h),
-      tec:nm, fp:serverTimestamp(), st:'CONSUMIDO'
-    });
+    await addDoc(collection(db,'movimientos'),{ ...payload, fp:serverTimestamp() });
+    fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', body:JSON.stringify(payload) }).catch(()=>{});
     cm('mCon'); toast('✅ Insumo registrado — '+nm,'success');
-  } catch(err){ console.error(err); toast('Error al registrar','error'); }
+  } catch(err){ toast('Error al registrar','error'); }
   btn.disabled=false; btn.textContent='Confirmar uso (-1 pz)';
 }
 
@@ -584,40 +566,48 @@ async function doCons(){
 // ALTA — Firestore (herramientas_nuevas) + Webhook → Google Sheets
 // ============================================================
 // URL del webhook de Apps Script (tu doPost en Code.gs)
-const WEBHOOK_URL = 'https://script.google.com/macros/s/TU_DEPLOYMENT_ID/exec';
+const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxhNKNe3ukm33wvd-YRZAOLqOw_PlFqazr1zThIjUbmDdtF8BFS_v7r2Vy2ULYHgsBi/exec';
 
 async function addTool(){
   const ds=document.getElementById('aD').value.trim();
   const ub=document.getElementById('aU').value.trim();
   const ct=parseInt(document.getElementById('aC').value);
   if(!ds||!ub||!ct||ct<1){ toast('Completa los campos obligatorios','error'); return; }
+  
   const btn=document.querySelector('#v-add .btn-primary');
   btn.disabled=true; btn.textContent='Guardando…';
-  const np=document.getElementById('aP').value.trim();
+  
+  // Extraemos ambos números de parte
+  const np=document.getElementById('aPF').value.trim();
+  const nz=document.getElementById('aPP').value.trim();
   const gr=document.getElementById('aG').value.trim();
   const tp=document.getElementById('aT').value;
-  const nid=Math.max(...RAW.map(h=>h.id))+1;
+  
+  const nid = RAW.length > 0 ? Math.max(...RAW.map(h=>h.id)) + 1 : 1;
+  
   const payload={
     accion:'ALTA_HERRAMIENTA',
-    id:nid, np, nz:'', tp, ds, gr, ub, ct,
+    id:nid, np:np, nz:nz, tp:tp, ds:ds, gr:gr, ub:ub, ct:ct,
     fecha_alta:new Date().toISOString()
   };
+  
   try {
-    // 1. Guardar en Firestore (colección herramientas_nuevas para auditoria)
     await addDoc(collection(db,'herramientas_nuevas'), {...payload, ts:serverTimestamp()});
-    // 2. Enviar a Google Sheets via webhook (no bloquear si falla)
-    fetch(WEBHOOK_URL, {
+    
+    // Apunta dinámicamente a tu Apps Script
+    fetch(SCRIPT_URL, {
       method:'POST',
       mode:'no-cors',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload)
     }).catch(()=>{});
-    // 3. Agregar al RAW local para uso inmediato en esta sesión
-    const nh={id:nid,np,nz:'',tp,ds,gr,ub,ct,_ctBase:ct,foto:null};
+    
+    const nh={id:nid,np,nz,tp,ds,gr,ub,ct,_ctBase:ct,foto:null};
     RAW.push(nh); window.RAW_MAP[nid]=nh;
-    ['aD','aP','aG','aU'].forEach(x=>document.getElementById(x).value='');
+    
+    ['aD','aPF','aPP','aG','aU'].forEach(x=>document.getElementById(x).value='');
     document.getElementById('aC').value='1';
-    toast('✅ #'+nid+' guardado en Firestore + enviado a Sheets','success');
+    toast('✅ #'+nid+' guardado en BD','success');
     sv('inv');
   } catch(err){
     console.error(err);
