@@ -130,7 +130,7 @@ body{background:var(--bmw-dark);color:var(--bmw-white);font-family:var(--font-di
 <div class="view active" id="v-inv"><div class="main-content">
 <input type="text" class="search-input" id="sI" placeholder="Buscar por #ID, número de parte o descripción…" oninput="doSearch()">
 <div class="filter-chips">
-<div class="chip active" data-f="todos" onclick="filt(this)">Todos (875)</div>
+<div class="chip active" data-f="todos" onclick="filt(this)">Todos</div>
 <div class="chip" data-f="disponible" onclick="filt(this)">Libres</div>
 <div class="chip" data-f="prestado" onclick="filt(this)">En uso</div>
 <div class="chip" data-f="insumo" onclick="filt(this)">Insumos</div>
@@ -147,9 +147,9 @@ body{background:var(--bmw-dark);color:var(--bmw-white);font-family:var(--font-di
 <div class="view" id="v-dash"><div class="main-content">
 <div class="section-title">Dashboard</div>
 <div class="kpi-grid">
-<div class="kpi-card" style="--kc:#4ADE80"><div class="kpi-num" id="k1">—</div><div class="kpi-lbl">Libres</div></div>
+<div class="kpi-card" style="--kc:#4ADE80"><div class="kpi-num" id="k1">—</div><div class="kpi-lbl">Líneas Libres</div></div>
 <div class="kpi-card" style="--kc:#FF6B6B"><div class="kpi-num" id="k2">—</div><div class="kpi-lbl">En uso</div></div>
-<div class="kpi-card" style="--kc:#FCD34D"><div class="kpi-num" id="k3">—</div><div class="kpi-lbl">Total</div></div>
+<div class="kpi-card" style="--kc:#FCD34D"><div class="kpi-num" id="k3">—</div><div class="kpi-lbl">Total Líneas</div></div>
 <div class="kpi-card" style="--kc:#60A5FA"><div class="kpi-num" id="k4">—</div><div class="kpi-lbl">Mov hoy</div></div>
 </div>
 <div class="section-title">Préstamos activos</div>
@@ -166,7 +166,8 @@ body{background:var(--bmw-dark);color:var(--bmw-white);font-family:var(--font-di
     <option value="FAMILIA_COMPLETA">Herramienta (Familia)</option>
     <option value="PIEZA_INDIVIDUAL">Herramienta (Pieza)</option>
     <option value="AMBOS">Ambos (Familia y Pieza)</option>
-    <option value="GENERICO">Insumo (Sin número de parte)</option>
+    <option value="HERRAMIENTA_GENERICA">Herramienta Genérica (Se devuelve)</option>
+    <option value="GENERICO">Insumo Consumible (Se gasta)</option>
   </select>
 </div>
 
@@ -330,7 +331,6 @@ async function init(){
     const res = await fetch(SCRIPT_URL);
     const data = await res.json();
 
-    // Mapeo blindado para asegurar que np y nz queden listos para búsqueda por dígitos
     RAW = data.map(r => ({
       id: parseInt(r.id),
       np: r.np !== undefined && r.np !== null ? String(r.np).trim() : "",
@@ -397,7 +397,6 @@ function filtered(){
     if(cFilt==='insumo' && !ins) return false;
     if(!cSearch) return true;
     
-    // Limpieza de caracteres para permitir búsqueda exacta de dígitos (ej. 610110)
     const q = cSearch.toLowerCase().replace(/[^a-z0-9]/g, '');
     if(!q) return true;
     
@@ -640,10 +639,11 @@ async function addTool(){
     const nh={id:nid,np,nz,tp,ds,gr,ub,ct,_ctBase:ct,foto:null};
     RAW.push(nh); window.RAW_MAP[nid]=nh;
     
+    // Limpia los campos para la siguiente captura sin cambiar de pestaña
     ['aD','aPF','aPP','aG','aU'].forEach(x=>document.getElementById(x).value='');
     document.getElementById('aC').value='1';
-    toast('✅ #'+nid+' guardado en BD','success');
-    sv('inv');
+    
+    toast('✅ #'+nid+' guardado. Listo para el siguiente.','success');
   } catch(err){
     console.error(err);
     toast('Error al guardar — revisa conexión','error');
@@ -678,13 +678,28 @@ ${m.obs?`<div style="font-size:11px;color:var(--bmw-silver);margin-top:2px">📝
 function renderD(){
   const acts=window.MOV.filter(m=>m.st==='PRESTADO');
   document.getElementById('k2').textContent=acts.length;
-  document.getElementById('k3').textContent=RAW.length;
-  let libresH=0, libresP=0;
-  RAW.forEach(h=>{ if(!isIns(h)){ const d=getDisp(h.id); if(d>0)libresH++; libresP+=d; }});
-  document.getElementById('k1').innerHTML=libresH+'<div style="font-size:11px;font-weight:400;color:#4ADE80;margin-top:1px">'+libresP+' piezas</div>';
+  
+  let totalLineas = RAW.length;
+  let totalPiezas = 0;
+  let libresLineas = 0;
+  let libresPiezas = 0;
+
+  RAW.forEach(h => {
+    totalPiezas += (parseInt(h._ctBase) || 0); 
+    const d = getDisp(h.id); 
+    if (d > 0) {
+      libresLineas++;
+      libresPiezas += d;
+    }
+  });
+
+  document.getElementById('k1').innerHTML = libresLineas + '<div style="font-size:11px;font-weight:400;color:#4ADE80;margin-top:1px">' + libresPiezas + ' pz físicas</div>';
+  document.getElementById('k3').innerHTML = totalLineas + '<div style="font-size:11px;font-weight:400;color:#FCD34D;margin-top:1px">' + totalPiezas + ' pz físicas</div>';
+
   const hoy=new Date().toDateString();
   const movHoy=window.MOV.filter(m=>{ const t=m.fp?.toDate?m.fp.toDate():new Date(m.fp); return t.toDateString()===hoy; }).length;
   document.getElementById('k4').textContent=movHoy;
+  
   const el=document.getElementById('pA');
   el.innerHTML=acts.length?acts.map(m=>{
     const ts=m.fp?.toDate?m.fp.toDate():new Date(m.fp);
@@ -721,7 +736,7 @@ function toggleCamposAlta() {
   if (tipo === 'FAMILIA_COMPLETA') { cFam.style.display='block'; cPza.style.display='none'; }
   else if (tipo === 'PIEZA_INDIVIDUAL') { cFam.style.display='none'; cPza.style.display='block'; }
   else if (tipo === 'AMBOS') { cFam.style.display='block'; cPza.style.display='block'; }
-  else if (tipo === 'GENERICO') { cFam.style.display='none'; cPza.style.display='none'; }
+  else { cFam.style.display='none'; cPza.style.display='none'; }
 }
 
 // ============================================================
